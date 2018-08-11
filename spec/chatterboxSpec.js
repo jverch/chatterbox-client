@@ -74,7 +74,9 @@ describe('chatterbox', function() {
       it('should submit a GET request via $.ajax', function(done) {
         app.fetch();
         expect($.ajax.calledOnce).to.be.true;
+        console.log('ajax.args ', $.ajax.args[0]);
         ajaxUrl = typeof $.ajax.args[0][0] === 'string' ? $.ajax.args[0][0] : $.ajax.args[0][0].url;
+        console.log('app.server: ', app.server);
         expect(ajaxUrl).to.equal(app.server);
         done();
       });
@@ -90,7 +92,7 @@ describe('chatterbox', function() {
 
       it('should be able to add messages to the DOM', function() {
         var message = {
-          username: 'Mel Brooks',
+          username: 'MelBrooks',
           text: 'Never underestimate the power of the Schwartz!',
           roomname: 'lobby'
         };
