@@ -4,8 +4,24 @@ var app = {};
 app.init = function() {
   this.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
   this.handleUsernameClick();
-  this.handleSubmit();
+  
   this.fetch();
+  
+   $('body').on('click', '#clearAll', app.clearMessages);
+  
+  $('body').on('click', '#getMessages', function(event) {
+    app.clearMessages();
+    app.fetch();
+    });
+  
+  $('body').on('click', '#send', '.submit', function(event) {
+    app.handleSubmit();
+  });
+  
+  $('body').on('click', '.dropbtn', function(event) {
+    console.log(document.getElementById("myDropdown").classList);
+    document.getElementById("myDropdown").classList.toggle("show");
+  });
   
 };
 
@@ -14,7 +30,7 @@ app.send = function(message) {
     // This is the url you should use to communicate with the parse API server.
     url: 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages',
     type: 'POST',
-    data: JSON.stringify(this.fixMessage(message)),
+    data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent');
@@ -31,8 +47,12 @@ app.fetch = function() {
     // This is the url you should use to communicate with the parse API server.
     url: 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages',
     type: 'GET',
+    // data: 'order=-createdAt',
+    data: {'order': '-createdAt', 'limit': '5'},
+
     success: function (data) {
-      console.log(data.results);
+      allData = data;
+      console.log(data);
       for (var i = 0; i < data.results.length; i++) {
         //render message data.results[i].text/username/room
         app.renderMessage(data.results[i]);
@@ -45,8 +65,14 @@ app.fetch = function() {
   });
 }
 
+
+//app.fetch()
+// wait
+//console.log(allData)
+
 app.clearMessages = function() {
   $('#chats').empty();
+  $('#myDropdown').empty();
 }
 
 app.renderMessage = function(message) {
@@ -54,16 +80,16 @@ app.renderMessage = function(message) {
     return;
   }
   var username = message.username.replace(/\s/g, '');
+  var text = message.text.replace(/\</g, '&lt;');
+  var room = message.roomname;
   
   $('#chats').append('<div class=message><div class=username id=' + username + '>' + 
-    message.username + '</div><div class=' + username + '>' + message.text + '</div></div>');
+    message.username + '</div><div class=' + username + '>' + text + '</div></div>');
   
-  // $('.message').append('<div class=\'username\'>' + message.username + '</div>');
-  // $('.message').append('<div class=\'username\'>' + message.text + '</div>');
+  app.renderRoom(room);
+  //create variable for room
+  //call renderRoom
   
-  
-  // $('#chats').append('<div class=\'text\'>' + message.text + '</div>');
-  console.log($('#chats'))
 }
 
 app.renderRoom = function(room) {
@@ -71,7 +97,10 @@ app.renderRoom = function(room) {
     // do nothing
   // else  
     // append new div with class room
-  $('#roomSelect').append('<div class=' + room + '></div>');
+  console.log($('.' + room));
+  if ($('.' + room)[0] === undefined) {
+    $('#myDropdown').append('<div class=' + room + '>' + room + '</div>');
+  }
 }
 
 app.fixMessage = function(message) {
@@ -88,19 +117,23 @@ app.handleUsernameClick = function() {
 }
 
 app.handleSubmit = function() {
-$('body').on('click', function(event) {
-    console.log('hi')
-  })
+  //take val of input field
+  var username = window.location.search.slice(10);
+  console.log(username);
+  var text = $('#input').val();
+  
+  //convert to message format
+  var message = {
+    username: username,
+    text: text,
+    roomname: 'lobby'
+  }
+  //invoke send
+  app.send(message);
+  
   
 }
 
-$( document ).ready(function() {
-
-  $('button').on('click', function(event) {
-    console.log('working');
-  });
-  app.init();
-});
 
 
 

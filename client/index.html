@@ -28,15 +28,20 @@
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
-      <button onclick="" class="dropbtn">Rooms</button>
-      <button id="send" class="submit">Submit</button>
-      <input type="text" id="input">
-        <!-- <div id="roomSelect" class="dropdown-content">
-          
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-        </div> -->
+      <div class="dropdown">
+        <button class="dropbtn">Rooms</button>
+          <div id="myDropdown" class="dropdown-content">
+            <!-- append new rooms here -->
+          </div>
       </div>
+      
+      <button id="send" class="submit">Submit</button>
+      <input type="text" id="input" placeholder="Message">
+      <button id="clearAll">Clear Messages</button>
+      <button id="getMessages">Get Messages</button>
+      <script>
+        $(function() {app.init()});
+      </script>
     </div>
     <div id="chats"></div>
   </body>
